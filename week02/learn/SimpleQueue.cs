@@ -9,8 +9,8 @@
         var queue = new SimpleQueue();
         queue.Enqueue(100);
         var value = queue.Dequeue();
-        Console.WriteLine(value);
-        // Defect(s) Found:
+        Console.WriteLine(value);  // Should output 100
+        // Defect(s) Found: Enqueue added to the front instead of back
 
         Console.WriteLine("------------");
 
@@ -23,12 +23,12 @@
         queue.Enqueue(300);
         queue.Enqueue(400);
         value = queue.Dequeue();
-        Console.WriteLine(value);
+        Console.WriteLine(value);  // Should output 200
         value = queue.Dequeue();
-        Console.WriteLine(value);
+        Console.WriteLine(value);  // Should output 300
         value = queue.Dequeue();
-        Console.WriteLine(value);
-        // Defect(s) Found: 
+        Console.WriteLine(value);  // Should output 400
+        // Defect(s) Found: Enqueue was reversed, Dequeue accessed wrong index
 
         Console.WriteLine("------------");
 
@@ -38,36 +38,38 @@
         Console.WriteLine("Test 3");
         queue = new SimpleQueue();
         try {
-            queue.Dequeue();
+            queue.Dequeue();  // Should throw IndexOutOfRangeException
             Console.WriteLine("Oops ... This shouldn't have worked.");
         }
         catch (IndexOutOfRangeException) {
             Console.WriteLine("I got the exception as expected.");
         }
-        // Defect(s) Found: 
+        // Defect(s) Found: No defect here if exception is thrown correctly
     }
 
+    // Backing list to store queue items
     private readonly List<int> _queue = new();
 
     /// <summary>
-    /// Enqueue the value provided into the queue
+    /// Enqueue the value provided into the queue.
+    /// Adds the item to the back of the queue (end of the list).
     /// </summary>
     /// <param name="value">Integer value to add to the queue</param>
     private void Enqueue(int value) {
-        _queue.Insert(0, value);
+        _queue.Add(value);  //  Add to the end for FIFO behavior
     }
 
     /// <summary>
-    /// Dequeue the next value and return it
+    /// Dequeue the next value (from the front of the queue) and return it.
+    /// Throws IndexOutOfRangeException if the queue is empty.
     /// </summary>
-    /// <exception cref="IndexOutOfRangeException">If queue is empty</exception>
-    /// <returns>First integer in the queue</returns>
+    /// <returns>The first integer in the queue</returns>
     private int Dequeue() {
         if (_queue.Count <= 0)
-            throw new IndexOutOfRangeException();
+            throw new IndexOutOfRangeException();  // handle empty queue
 
-        var value = _queue[1];
-        _queue.RemoveAt(1);
+        var value = _queue[0];     // Get the first element (FIFO)
+        _queue.RemoveAt(0);        // Remove it from the front
         return value;
     }
 }
