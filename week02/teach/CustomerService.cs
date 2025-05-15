@@ -11,11 +11,17 @@ public class CustomerService {
         // Test Cases
 
         // Test 1
-        // Scenario: 
-        // Expected Result: 
+        // Scenario : Can I add one customer and then serve the customer?
+        // Expected Result: this should display the customer that was added
         Console.WriteLine("Test 1");
+        var cs = new CustomerService(3);
+        cs.AddNewCustomer();
+        Console.WriteLine(cs);
 
-        // Defect(s) Found: 
+        
+
+
+        // Defect(s) Found: the number of customers in the queue is smaller than the max size
 
         Console.WriteLine("=================");
 
@@ -23,14 +29,40 @@ public class CustomerService {
         // Scenario: 
         // Expected Result: 
         Console.WriteLine("Test 2");
-
+        var service = new CustomerService(5);
+        service.AddNewCustomer();
+        service.AddNewCustomer();
+        Console.WriteLine($"Before serving customers: {service}");
+        service.ServeCustomer();
+        service.ServeCustomer();
+        service.ServeCustomer();
+        Console.WriteLine($"After serving customers: {service}");
         // Defect(s) Found: 
 
         Console.WriteLine("=================");
 
-        // Add more Test Cases As Needed Below
-    }
+        Console.WriteLine("Test 3");
+        var service3 = new CustomerService(2);
+        service3.ServeCustomer(); // Should print error about empty queue
+        // Defect(s) Found: This found that I need to check the length in serve_customer and display an error message
 
+        Console.WriteLine("=================");
+        // Test 4
+
+    Console.WriteLine(" Test 4");
+     var service4 = new CustomerService(1);
+     service4._queue.Add(new Customer("Bob", "B456", "Password Reset"));
+     service4.AddNewCustomer(); // Should print "Maximum number of customers in queue."
+
+       Console.WriteLine("=================");
+     Console.WriteLine("Test 5");
+     service = new CustomerServiceSolution(0);
+     Console.WriteLine($"Size should be 10: {service}");
+       Console.WriteLine("=================");
+     // Defect(s) Found: None :)
+        // Add more Test Cases As Needed Below
+}
+    
     private readonly List<Customer> _queue = new();
     private readonly int _maxSize;
 
@@ -45,7 +77,7 @@ public class CustomerService {
     /// Defines a Customer record for the service queue.
     /// This is an inner class.  Its real name is CustomerService.Customer
     /// </summary>
-    private class Customer {
+    public class Customer {
         public Customer(string name, string accountId, string problem) {
             Name = name;
             AccountId = accountId;
@@ -67,7 +99,7 @@ public class CustomerService {
     /// </summary>
     private void AddNewCustomer() {
         // Verify there is room in the service queue
-        if (_queue.Count > _maxSize) {
+        if (_queue.Count >= _maxSize) {
             Console.WriteLine("Maximum Number of Customers in Queue.");
             return;
         }
@@ -88,9 +120,16 @@ public class CustomerService {
     /// Dequeue the next customer and display the information.
     /// </summary>
     private void ServeCustomer() {
-        _queue.RemoveAt(0);
-        var customer = _queue[0];
-        Console.WriteLine(customer);
+        if (_queue.Count ==  0) {
+            Console.WriteLine("No Customers in Queue.");
+            return;
+        }
+        else{
+            var customer = _queue[0];
+            _queue.RemoveAt(0);
+            Console.WriteLine("Now serving: " + customer);
+        }
+      
     }
 
     /// <summary>
