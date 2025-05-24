@@ -22,7 +22,23 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var seen = new HashSet<string>();
+        var result= new List<string>();
+        foreach (var word in words)
+        {
+            if (word[0]==word[1])
+            continue; // skip words with same letters
+            var reversed = new string(new[]{word[1], word[0]});
+            if (seen.Contains(reversed))
+        
+            {
+                result.Add($"{word} & {reversed}");
+            }
+            
+            seen.Add(word);
+        }
+        return result.ToArray();
+        
     }
 
     /// <summary>
@@ -41,14 +57,29 @@ public static class SetsAndMaps
         var degrees = new Dictionary<string, int>();
         foreach (var line in File.ReadLines(filename))
         {
-            var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
-        }
+            var fields = line.Split(",");
+             if (fields.Length <= 3)
+                continue; // skip lines that do not have enough fields
+            var degree = fields[3].Trim();
+            if (string.IsNullOrWhiteSpace(degree))
+                continue; // skip empty degrees
+            
+            if (degrees.ContainsKey(degree))
+            {
 
+                degrees[degree] ++;
+            }
+            else
+            {
+                degrees[degree] = 1;
+            }
+            
+       }
         return degrees;
     }
 
-    /// <summary>
+        /// <summary>
     /// Determine if 'word1' and 'word2' are anagrams.  An anagram
     /// is when the same letters in a word are re-organized into a 
     /// new word.  A dictionary is used to solve the problem.
@@ -64,11 +95,41 @@ public static class SetsAndMaps
     /// Reminder: You can access a letter by index in a string by 
     /// using the [] notation.
     /// </summary>
-    public static bool IsAnagram(string word1, string word2)
-    {
-        // TODO Problem 3 - ADD YOUR CODE HERE
+  public static bool IsAnagram(string word1, string word2){
+    // Normalize: Remove spaces and convert to lowercase
+    word1 = word1.Replace(" ", "").ToLower();
+    word2 = word2.Replace(" ", "").ToLower();
+
+    if (word1.Length != word2.Length)
         return false;
+
+    var letterCounts = new Dictionary<char, int>();
+
+    // Count letters in word1
+    foreach (char c in word1)
+    {
+        if (letterCounts.ContainsKey(c))
+            letterCounts[c]++;
+        else
+            letterCounts[c] = 1;
     }
+
+    // Subtract counts using word2
+    foreach (char c in word2)
+    {
+        if (!letterCounts.ContainsKey(c))
+            return false;
+
+        letterCounts[c]--;
+
+        if (letterCounts[c] < 0)
+            return false;
+    }
+
+    // Final check: All counts must be 0
+    return letterCounts.Values.All(count => count == 0);
+  }
+
 
     /// <summary>
     /// This function will read JSON (Javascript Object Notation) data from the 
@@ -101,6 +162,21 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+          var result = new List<string>();
+       if (featureCollection?.Features != null)
+      {
+        foreach (var feature in featureCollection.Features)
+        {
+            var place = feature?.Properties?.Place;
+            var mag = feature?.Properties?.Mag;
+
+            if (!string.IsNullOrWhiteSpace(place) && mag.HasValue)
+            {
+                result.Add($"{place} - Mag {mag.Value}");
+            }
+        }
+    }
+
+    return result.ToArray();
     }
 }
